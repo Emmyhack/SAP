@@ -6,7 +6,7 @@ interface StatCardProps {
   color?: 'primary' | 'accent' | 'green' | 'blue';
 }
 
-export default function StatCard({ label, value, change, icon, color = 'primary' }: StatCardProps) {
+export default function StatCard({ label, value, change, color = 'primary' }: StatCardProps) {
   const colorStyles = {
     primary: 'text-primary border-primary/30 hover:border-primary/70',
     accent: 'text-accent border-accent/30 hover:border-accent/70',
@@ -16,12 +16,9 @@ export default function StatCard({ label, value, change, icon, color = 'primary'
 
   return (
     <div className={`card group hover:shadow-xl transition-all border-2 ${colorStyles[color]}`}>
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-2">{label}</p>
-          <p className="text-4xl font-black group-hover:scale-110 transition-transform">{value}</p>
-        </div>
-        {icon && <span className="text-3xl group-hover:animate-float">{icon}</span>}
+      <div className="mb-4">
+        <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">{label}</p>
+        <p className="text-4xl font-black group-hover:scale-110 transition-transform">{value}</p>
       </div>
       {change && (
         <p className="text-xs text-gray-500">

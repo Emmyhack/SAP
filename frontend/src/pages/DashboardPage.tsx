@@ -3,43 +3,6 @@ import { useState } from 'react';
 import { useHasPassport, useMintPassport, usePassportData } from '../hooks/useWeb3';
 import Button from '../components/Button';
 import StatCard from '../components/StatCard';
-import ChallengeCard from '../components/ChallengeCard';
-
-const challenges = [
-  {
-    id: 0,
-    title: 'Speed Challenge',
-    difficulty: 1 as const,
-    entryFee: 0.01,
-    duration: 300,
-    participants: 42,
-    description: 'Complete the challenge within 5 minutes',
-    icon: '⚡',
-    reward: '500 Rep'
-  },
-  {
-    id: 1,
-    title: 'Logic Puzzle',
-    difficulty: 2 as const,
-    entryFee: 0.05,
-    duration: 600,
-    participants: 28,
-    description: 'Solve complex logic problems',
-    icon: '🧩',
-    reward: '1,500 Rep'
-  },
-  {
-    id: 2,
-    title: 'Master Challenge',
-    difficulty: 3 as const,
-    entryFee: 0.1,
-    duration: 900,
-    participants: 12,
-    description: 'Advanced challenge - only for the best',
-    icon: '👑',
-    reward: '5,000 Rep'
-  },
-];
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
@@ -51,151 +14,169 @@ export default function DashboardPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary/5 to-transparent flex items-center justify-center px-4">
-        <div className="text-center max-w-2xl animate-fade-in">
-          <div className="text-7xl mb-6">🎮</div>
-          <h1 className="text-4xl font-black mb-4">Connect to Get Started</h1>
-          <p className="text-gray-400 text-lg mb-8">
-            Connect your wallet to access the Somnia Arena dashboard and start your competitive journey.
+      <div className="min-h-screen pt-20 pb-16 flex items-center justify-center px-4">
+        <div className="text-center max-w-2xl">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
+            Connect Your Wallet
+          </h1>
+          <p className="text-gray-400 text-lg mb-12">
+            Access your Somnia Arena dashboard. Once connected, you'll be able to mint your passport, browse challenges, and compete globally.
           </p>
-          <div className="card bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-            <p className="text-gray-300 mb-4">Once connected, you'll be able to:</p>
-            <ul className="text-left space-y-2 text-gray-400 text-sm mb-6">
-              <li>✓ Mint your soulbound Passport</li>
-              <li>✓ Browse & enter challenges</li>
-              <li>✓ Track your reputation</li>
-              <li>✓ Compete globally</li>
-            </ul>
+          <div className="bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-border rounded-xl p-8 md:p-12">
+            <p className="text-gray-300 font-bold mb-6">What you can do:</p>
+            <div className="space-y-4 text-left">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                  1
+                </div>
+                <div>
+                  <p className="font-bold text-white">Mint your soulbound Passport</p>
+                  <p className="text-gray-400 text-sm">Create your permanent gaming identity</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                  2
+                </div>
+                <div>
+                  <p className="font-bold text-white">Browse and enter challenges</p>
+                  <p className="text-gray-400 text-sm">Find competitions at all difficulty levels</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                  3
+                </div>
+                <div>
+                  <p className="font-bold text-white">Track your reputation</p>
+                  <p className="text-gray-400 text-sm">Build your score and climb the leaderboard</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     );
   }
-
   return (
-    <div className="pb-12">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b border-primary/30 -mx-4 px-4 py-12">
-        <div className="container mx-auto">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-accent font-bold text-sm tracking-widest uppercase">Welcome Back</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-2">
-            {address?.slice(0, 6)}...{address?.slice(-4)}
+    <div className="min-h-screen pt-20 pb-16">
+      <div className="container-custom">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
+            Your Arena
           </h1>
-          <p className="text-gray-400 text-lg">Your competitive gaming dashboard</p>
+          <p className="text-gray-400 text-lg">
+            {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Connected'}
+          </p>
         </div>
-      </div>
 
-      <main className="container mx-auto px-4 py-12">
-        {/* Passport Status Card */}
+        {/* Passport Section */}
         {passportLoading ? (
-          <div className="mb-12 card animate-pulse">
-            <div className="h-40 bg-gray-700/30 rounded-lg"></div>
+          <div className="bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-border rounded-xl p-12 mb-12 animate-pulse">
+            <div className="h-40 bg-gray-700/20 rounded-lg"></div>
           </div>
         ) : !hasPassport ? (
-          <div className="mb-12 card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/50">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h2 className="text-3xl font-black mb-3">Mint Your Passport</h2>
-                <p className="text-gray-400 mb-6">
-                  Your soulbound NFT is your ticket to the arena. Mint it now to unlock all challenges and start building your reputation.
-                </p>
-                <ul className="space-y-2 text-sm mb-8">
-                  <li className="flex items-center gap-2 text-gray-300">
-                    <span className="text-accent">✓</span> Permanent blockchain identity
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-300">
-                    <span className="text-accent">✓</span> Non-transferable (soulbound)
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-300">
-                    <span className="text-accent">✓</span> Instant access to all challenges
-                  </li>
-                </ul>
-                <Button
-                  onClick={() => setShowMintModal(true)}
-                  variant="primary"
-                  size="lg"
-                >
-                  🚀 Mint Your Passport
-                </Button>
-              </div>
-              <div className="flex justify-center">
-                <div className="text-9xl animate-float">🎖️</div>
-              </div>
+          <div className="bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-border rounded-xl p-8 md:p-12 mb-12">
+            <div className="max-w-2xl">
+              <p className="text-gray-400 text-sm font-bold mb-3 uppercase">Get Started</p>
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+                Mint Your Passport
+              </h2>
+              <p className="text-gray-400 mb-8 text-lg leading-relaxed">
+                Your Somnia Arena Passport is a soulbound NFT that serves as your permanent gaming identity. Once minted, you'll have access to all challenges and can start building your reputation on the blockchain.
+              </p>
+              <Button
+                onClick={() => setShowMintModal(true)}
+                variant="primary"
+                size="lg"
+              >
+                Mint Passport
+              </Button>
             </div>
           </div>
         ) : (
           <>
-            {/* Passport Active Card */}
-            <div className="mb-12 card border-primary/50 bg-gradient-to-r from-primary/5 to-accent/5">
-              <div className="flex items-start justify-between">
+            {/* Passport Active */}
+            <div className="bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-border rounded-xl p-8 md:p-12 mb-12">
+              <div className="flex items-start justify-between gap-8">
                 <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-green-400 font-bold text-sm">PASSPORT ACTIVE</span>
-                  </div>
-                  <h2 className="text-2xl font-black mb-2">Your Passport is Ready</h2>
-                  <p className="text-gray-400">You're all set to compete! Browse challenges and start your journey.</p>
+                  <p className="text-green-400 text-sm font-bold mb-2 uppercase">Status</p>
+                  <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+                    Passport Active
+                  </h2>
+                  <p className="text-gray-400 max-w-md">
+                    You are now ready to enter challenges and compete for reputation. View available challenges or check your statistics below.
+                  </p>
                 </div>
-                <div className="text-6xl animate-float">🎖️</div>
               </div>
             </div>
 
-            {/* Stats Grid */}
+            {/* Statistics */}
             {passportData && (
               <div className="mb-12">
-                <h2 className="text-2xl font-black mb-6">Your Statistics</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <p className="text-gray-400 text-sm font-bold mb-6 uppercase">Your Statistics</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <StatCard
-                    label="Reputation"
-                    value={passportData[0] || 0}
-                    icon="📈"
+                    label="Reputation Score"
+                    value={`${passportData[0] || 0}`}
                     color="primary"
                   />
                   <StatCard
                     label="Arena Points"
-                    value={passportData[1] || 0}
-                    icon="⭐"
+                    value={`${passportData[1] || 0}`}
                     color="accent"
                   />
                   <StatCard
-                    label="Victories"
-                    value={passportData[2] || 0}
-                    icon="🏆"
+                    label="Total Victories"
+                    value={`${passportData[2] || 0}`}
                     color="green"
                   />
                   <StatCard
-                    label="Participation"
-                    value={passportData[3] || 0}
-                    icon="⚡"
+                    label="Challenges Entered"
+                    value={`${passportData[3] || 0}`}
                     color="blue"
                   />
                 </div>
               </div>
             )}
+
+            {/* Next Steps */}
+            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-border rounded-xl p-8 md:p-12">
+              <h3 className="text-2xl font-black text-white mb-6">Continue Your Journey</h3>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                    1
+                  </div>
+                  <div>
+                    <p className="font-bold text-white mb-1">Explore Challenges</p>
+                    <p className="text-gray-400 text-sm">Browse available competitions across all difficulty levels</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                    2
+                  </div>
+                  <div>
+                    <p className="font-bold text-white mb-1">Enter Challenges</p>
+                    <p className="text-gray-400 text-sm">Pay the entry fee and join your first competition</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 font-bold text-primary">
+                    3
+                  </div>
+                  <div>
+                    <p className="font-bold text-white mb-1">Compete & Win</p>
+                    <p className="text-gray-400 text-sm">Build your reputation and climb the global leaderboard</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </>
         )}
-
-        {/* Featured Challenges */}
-        <section>
-          <div className="mb-8">
-            <h2 className="text-2xl font-black mb-2">Featured Challenges</h2>
-            <p className="text-gray-400">Browse the latest challenges and find one that suits you</p>
-          </div>
-
-          <div className="space-y-5">
-            {challenges.map((challenge) => (
-              <ChallengeCard
-                key={challenge.id}
-                {...challenge}
-                loading={false}
-                onJoin={() => console.log('Join challenge', challenge.id)}
-              />
-            ))}
-          </div>
-        </section>
-      </main>
+      </div>
 
       {/* Mint Modal */}
       {showMintModal && (
@@ -222,29 +203,36 @@ export default function DashboardPage() {
 
             <div className="space-y-4 mb-6">
               <div className="bg-dark/50 rounded-lg p-4 border border-border">
-                <p className="text-sm text-gray-400 mb-2">What you'll get:</p>
+                <p className="text-sm text-gray-400 mb-3 font-bold">What you'll get:</p>
                 <ul className="space-y-2 text-sm text-gray-300">
-                  <li>✓ Soulbound NFT passport</li>
-                  <li>✓ Permanent gaming identity</li>
-                  <li>✓ Access to all challenges</li>
-                  <li>✓ Reputation tracking</li>
+                  <li className="flex gap-2">
+                    <span className="text-accent font-bold">✓</span>
+                    <span>Soulbound NFT passport</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent font-bold">✓</span>
+                    <span>Permanent gaming identity</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent font-bold">✓</span>
+                    <span>Access to all challenges</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-accent font-bold">✓</span>
+                    <span>Reputation tracking</span>
+                  </li>
                 </ul>
-              </div>
-
-              <div className="bg-dark/50 rounded-lg p-4 border border-border">
-                <p className="text-sm text-gray-400 mb-2">Transaction details:</p>
-                <p className="text-sm text-accent font-semibold">One-time minting fee</p>
               </div>
 
               {mintSuccess && (
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                  <p className="text-green-400 text-sm font-semibold">✓ {mintSuccess}</p>
+                  <p className="text-green-400 text-sm font-semibold">{mintSuccess}</p>
                 </div>
               )}
 
               {mintError && (
                 <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-                  <p className="text-red-400 text-sm font-semibold">⚠️ {mintError.message}</p>
+                  <p className="text-red-400 text-sm font-semibold">{mintError.message}</p>
                 </div>
               )}
             </div>
@@ -268,11 +256,11 @@ export default function DashboardPage() {
               fullWidth
               size="lg"
             >
-              🚀 {minting ? 'Minting...' : 'Mint Now'}
+              {minting ? 'Minting...' : 'Mint Now'}
             </Button>
 
             <p className="text-xs text-gray-500 text-center mt-4">
-              One transaction · Non-transferable · Forever yours
+              One transaction • Non-transferable • Forever yours
             </p>
           </div>
         </div>
