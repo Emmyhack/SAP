@@ -1,0 +1,22 @@
+{
+  "network": {
+    "name": "somnia-testnet",
+    "chainId": "50312"
+  },
+  "deployer": "0x9DD7413F7876aA2DC2ef3CA66a70E65841c190bf",
+  "timestamp": "2026-02-22T10:04:17.320Z",
+  "contracts": {
+    "SomniaPassport": {
+      "address": "0x4EA2810Ac8940336Ca3622Ce8363f61D87444dD6",
+      "type": "ERC721Soulbound"
+    },
+    "ArenaEngine": {
+      "address": "0x871Ba70245D1f25BDA5eB394C56A05d576c83875",
+      "type": "ChallengeManagement"
+    },
+    "ReputationCore": {
+      "address": "0x301f106a714cD1b5524D9F9EEa6241fE4BBF14d0",
+      "type": "ReputationEngine"
+    }
+  }
+}
