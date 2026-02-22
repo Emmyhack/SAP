@@ -31,7 +31,7 @@ export default function DashboardPage() {
     <div className="min-h-screen pt-20 pb-16 bg-white">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
-        <div className="mb-16 pb-8 border-b border-border">
+        <div className="mb-16 pb-8 border-b border-border animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-black text-dark mb-3">
             Dashboard
           </h1>
@@ -46,7 +46,7 @@ export default function DashboardPage() {
             <div className="h-40 bg-gray-200 rounded-xl"></div>
           </div>
         ) : !hasPassport ? (
-          <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-2 border-primary/30 rounded-2xl p-12 mb-16">
+          <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-2 border-primary/30 rounded-2xl p-12 mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-black text-dark mb-6">
               Set Up Your Passport
             </h2>
@@ -64,7 +64,7 @@ export default function DashboardPage() {
         ) : (
           <>
             {/* Passport Active */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-12 mb-16">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-12 mb-16 animate-fade-in">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <p className="text-green-600 font-semibold">Active & Verified</p>
@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
             {/* Statistics */}
             {passportData && (
-              <div className="mb-16">
+              <div className="mb-16 animate-fade-in" style={{animationDelay: '0.2s'}}>
                 <h3 className="text-2xl font-black text-dark mb-8">Your Statistics</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <StatCard
@@ -107,7 +107,7 @@ export default function DashboardPage() {
             )}
 
             {/* Next Steps */}
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-12">
+            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-12 animate-fade-in" style={{animationDelay: '0.4s'}}>
               <h3 className="text-2xl font-black text-dark mb-10">What's Next?</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
       {/* Mint Modal */}
       {showMintModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="relative bg-white rounded-2xl p-8 md:p-12 max-w-md w-full">
+          <div className="relative bg-white rounded-2xl p-8 md:p-12 max-w-md w-full animate-fade-in">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-black text-dark">Mint Your Passport</h3>
               <button

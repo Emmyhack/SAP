@@ -62,8 +62,8 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-8">
-                <p className="text-sm font-bold text-blue-600 mb-4 uppercase tracking-wide">Network Details</p>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-8">
+                <p className="text-sm font-bold text-green-600 mb-4 uppercase tracking-wide">Network Details</p>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <p className="text-gray-700">Network</p>
@@ -94,8 +94,8 @@ export default function ProfilePage() {
           <div>
             <h2 className="text-2xl font-black text-dark mb-8">Quick Info</h2>
             <div className="space-y-5">
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                <p className="text-xs font-bold text-blue-600 mb-3 uppercase tracking-wide">Member Since</p>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                <p className="text-xs font-bold text-green-600 mb-3 uppercase tracking-wide">Member Since</p>
                 <p className="text-lg font-bold text-dark">Recent</p>
                 <p className="text-sm text-gray-600">Profile created</p>
               </div>
@@ -116,7 +116,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Getting Started */}
-        <div className="mt-16 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-12">
+        <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-12 animate-fade-in">
           <h2 className="text-3xl font-black text-dark mb-10">Your Next Steps</h2>
           
           <p className="text-gray-700 mb-10 text-lg">

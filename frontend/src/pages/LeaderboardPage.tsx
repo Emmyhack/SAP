@@ -61,7 +61,7 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Empty State */}
-        <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-16 text-center mb-16">
+        <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-16 text-center mb-16 animate-fade-in">
           <h2 className="text-4xl font-black text-dark mb-6">Leaderboard Coming Soon</h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-10">
             Rankings will populate as players mint passports and complete challenges. Your position will update in real-time based on wins, reputation points, and participation.

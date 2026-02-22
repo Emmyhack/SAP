@@ -70,7 +70,7 @@ export default function ChallengesPage() {
         </div>
 
         {/* Empty State */}
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-16 text-center mb-16">
+        <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-16 text-center mb-16 animate-fade-in">
           <h2 className="text-4xl font-black text-dark mb-6">No Challenges Available Yet</h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-10">
             The challenge marketplace is being populated with competitions. Once challenges are created, you'll be able to browse, filter, and join competitions to start earning.
