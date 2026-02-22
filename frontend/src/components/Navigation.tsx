@@ -15,43 +15,42 @@ export default function Navigation({ currentPage, setCurrentPage }: NavigationPr
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'challenges', label: 'Challenges', icon: '⚡' },
-    { id: 'leaderboard', label: 'Leaderboard', icon: '🏆' },
-    { id: 'profile', label: 'Profile', icon: '👤' },
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'challenges', label: 'Challenges' },
+    { id: 'leaderboard', label: 'Rankings' },
+    { id: 'profile', label: 'Profile' },
   ] as const;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-secondary/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border/30 bg-dark/80 backdrop-blur-2xl">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div
-            className="flex items-center gap-3 group cursor-pointer"
+            className="flex items-center gap-3 group cursor-pointer hover:opacity-85 transition-opacity"
             onClick={() => setCurrentPage('dashboard')}
           >
             <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-xl flex items-center justify-center shadow-lg shadow-primary/50 group-hover:shadow-accent/50 transition-all">
-              <span className="text-xl font-bold">⚡</span>
+              <span className="text-lg font-black text-white">S</span>
             </div>
             <div>
-              <h1 className="text-sm font-black uppercase tracking-widest text-white">Somnia</h1>
-              <p className="text-xs text-accent font-bold">ARENA PASSPORT</p>
+              <h1 className="text-xs font-black uppercase tracking-widest text-white">Somnia Arena</h1>
+              <p className="text-xs text-accent/70 font-bold">Competitive Platform</p>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id as any)}
-                className={`px-5 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   currentPage === item.id
-                    ? 'bg-primary text-white shadow-lg shadow-primary/50'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30'
+                    : 'text-gray-400 hover:text-white hover:bg-primary/10 border border-transparent hover:border-primary/30'
                 }`}
               >
-                <span>{item.icon}</span>
                 {item.label}
               </button>
             ))}
@@ -61,9 +60,9 @@ export default function Navigation({ currentPage, setCurrentPage }: NavigationPr
           <div className="flex items-center gap-4">
             {isConnected ? (
               <div className="hidden md:flex items-center gap-3">
-                <div className="px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 group hover:border-primary/70 transition-all">
-                  <p className="text-xs text-gray-400 font-bold mb-1">Connected</p>
-                  <p className="text-sm text-primary font-mono font-bold">
+                <div className="px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 hover:border-primary/70 transition-all group">
+                  <p className="text-xs text-gray-400 font-bold mb-1 uppercase tracking-wider">Connected</p>
+                  <p className="text-sm text-primary font-mono font-bold group-hover:text-accent transition-colors">
                     {address?.slice(0, 6)}...{address?.slice(-4)}
                   </p>
                 </div>
@@ -71,6 +70,7 @@ export default function Navigation({ currentPage, setCurrentPage }: NavigationPr
                   onClick={() => disconnect()}
                   variant="secondary"
                   size="sm"
+                  className="text-xs"
                 >
                   Disconnect
                 </Button>
@@ -89,7 +89,7 @@ export default function Navigation({ currentPage, setCurrentPage }: NavigationPr
 
             {/* Mobile Menu Toggle */}
             <button
-              className="md:hidden p-2 hover:bg-primary/10 rounded-lg transition-colors"
+              className="md:hidden p-2 hover:bg-primary/10 rounded-lg transition-colors text-gray-400 hover:text-white border border-transparent hover:border-primary/30"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

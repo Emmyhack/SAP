@@ -36,12 +36,12 @@ export default function Button({
   const variantStyles = {
     primary: error 
       ? 'bg-red-600/50 text-white disabled:opacity-50'
-      : 'bg-gradient-to-r from-primary to-blue-600 text-white hover:shadow-lg hover:shadow-primary/50 disabled:opacity-50',
-    secondary: 'bg-secondary border border-border text-white hover:border-primary/50 disabled:opacity-50',
+      : 'bg-primary text-white hover:bg-secondary disabled:opacity-50',
+    secondary: 'bg-white border-2 border-border text-dark hover:border-primary hover:text-primary disabled:opacity-50',
     accent: error
       ? 'bg-red-600/50 text-white disabled:opacity-50'
-      : 'bg-gradient-to-r from-accent to-cyan-400 text-dark hover:shadow-lg hover:shadow-accent/50 disabled:opacity-50',
-    ghost: 'text-gray-300 hover:text-white hover:bg-white/10 disabled:opacity-50',
+      : 'bg-secondary text-white hover:bg-primary disabled:opacity-50',
+    ghost: 'text-gray-700 hover:text-primary disabled:opacity-50',
   };
 
   const widthStyles = fullWidth ? 'w-full' : '';
