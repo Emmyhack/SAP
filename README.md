@@ -2,7 +2,7 @@
 
 A production-ready decentralized application (DApp) for the Somnia blockchain featuring passport minting, arena challenges, and reputation tracking.
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Smart Contracts (Solidity 0.8.24)
 - **SomniaPassport**: ERC-721 soulbound NFTs for passport management
@@ -14,7 +14,7 @@ A production-ready decentralized application (DApp) for the Somnia blockchain fe
 - **Arena Page**: Challenge listing, participation, and leaderboard
 - **Web3 Integration**: Wagmi + Viem for contract interaction
 
-## 📦 Deployed Contracts (Somnia Testnet)
+##  Deployed Contracts (Somnia Testnet)
 
 | Contract | Address |
 |----------|---------|
@@ -22,7 +22,7 @@ A production-ready decentralized application (DApp) for the Somnia blockchain fe
 | ArenaEngine | `0x871Ba70245D1f25BDA5eB394C56A05d576c83875` |
 | ReputationCore | `0x301f106a714cD1b5524D9F9EEa6241fE4BBF14d0` |
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -46,7 +46,7 @@ npm run build        # Build for production
 npm run preview      # Preview production build
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 ### Network Configuration
 The project is configured for **Somnia Testnet**:
@@ -62,7 +62,7 @@ VITE_SOMNIA_TESTNET_CHAIN_ID=50312
 VITE_SOMNIA_TESTNET_EXPLORER_URL=https://testnet-explorer.somnia.network
 ```
 
-## 📋 Features
+##  Features
 
 ### Home Page
 - ✅ Wallet connection/disconnection
@@ -77,7 +77,7 @@ VITE_SOMNIA_TESTNET_EXPLORER_URL=https://testnet-explorer.somnia.network
 - ✅ Challenge details modal
 - ✅ Responsive design
 
-## 🧪 Testing
+##  Testing
 
 ### Smart Contracts
 ```bash
@@ -93,7 +93,7 @@ REPORT_GAS=true npx hardhat test
 - ArenaEngine: 45 tests (challenges, scoring, participation)
 - ReputationCore: 24 tests (reputation calculation, ranking)
 
-## 📚 Project Structure
+##  Project Structure
 
 ```
 ├── contracts/              # Smart contracts (Solidity)
@@ -113,7 +113,7 @@ REPORT_GAS=true npx hardhat test
 └── README.md
 ```
 
-## 🔑 Key Technologies
+##  Key Technologies
 
 ### Backend
 - **Solidity** 0.8.24 - Smart contract language
@@ -130,7 +130,7 @@ REPORT_GAS=true npx hardhat test
 - **Tailwind CSS** 3 - Styling
 - **TanStack Query** 5 - Data fetching
 
-## 🔐 Security Features
+##  Security Features
 
 ### Smart Contracts
 - ✅ Nonreentrancy guards (OpenZeppelin)
@@ -145,7 +145,7 @@ REPORT_GAS=true npx hardhat test
 - ✅ Safe contract interaction patterns
 - ✅ User input validation
 
-## 📖 Usage
+##  Usage
 
 ### Mint a Passport
 1. Connect your wallet on the Home page
@@ -165,7 +165,7 @@ REPORT_GAS=true npx hardhat test
 - See top 10 users ranked by score
 - Highlight shows your position
 
-## 🚢 Deployment
+##  Deployment
 
 The project includes a complete deployment script that:
 1. Deploys all three contracts in the correct order
@@ -177,18 +177,16 @@ The project includes a complete deployment script that:
 npx hardhat run scripts/deploy.js --network somnia-testnet
 ```
 
-## 📝 License
+##  License
 
 MIT License - See LICENSE file for details
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions welcome! Please follow conventional commits and add tests for new features.
 
-## 📞 Support
+##  Support
 
 For issues or questions, please open a GitHub issue or check the documentation.
 
----
 
-**Built with ❤️ for the Somnia ecosystem**

@@ -1,44 +1,42 @@
 import { useAccount } from 'wagmi';
-import { useState, useEffect } from 'react';
-import { useChallenges, useChallenge, useEnterChallenge, useLeaderboard } from '../hooks/useWeb3';
+import { useState } from 'react';
+import { useEnterChallenge } from '../hooks/useWeb3';
 
 export default function ArenaPage() {
   const { address, isConnected } = useAccount();
-  const { challengeCount, isLoading: challengesLoading } = useChallenges();
   const { enter, isLoading: entering } = useEnterChallenge();
-  const { leaderboard, isLoading: leaderboardLoading } = useLeaderboard();
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
-  const [challenges, setChallenges] = useState<any[]>([]);
-
-  // Mock challenges for demo (in production, fetch from contract)
-  useEffect(() => {
-    setChallenges([
-      {
-        id: 0,
-        title: 'Speed Challenge',
-        difficulty: 1,
-        reward: 100,
-        timeLimit: 300,
-        participants: 42,
-      },
-      {
-        id: 1,
-        title: 'Logic Puzzle',
-        difficulty: 2,
-        reward: 250,
-        timeLimit: 600,
-        participants: 28,
-      },
-      {
-        id: 2,
-        title: 'Master Challenge',
-        difficulty: 3,
-        reward: 500,
-        timeLimit: 900,
-        participants: 12,
-      },
-    ]);
-  }, []);
+  
+  // Demo challenges (contract doesn't expose getAll, so we show examples)
+  const challenges = [
+    {
+      id: 0,
+      title: 'Speed Challenge',
+      difficulty: 1,
+      entryFee: 0.01,
+      duration: 300,
+      participants: 42,
+      description: 'Complete the challenge within 5 minutes'
+    },
+    {
+      id: 1,
+      title: 'Logic Puzzle',
+      difficulty: 2,
+      entryFee: 0.05,
+      duration: 600,
+      participants: 28,
+      description: 'Solve complex logic problems'
+    },
+    {
+      id: 2,
+      title: 'Master Challenge',
+      difficulty: 3,
+      entryFee: 0.1,
+      duration: 900,
+      participants: 12,
+      description: 'Advanced challenge - only for the best'
+    },
+  ];
 
   if (!isConnected) {
     return (
@@ -53,7 +51,7 @@ export default function ArenaPage() {
     <div className="max-w-6xl mx-auto">
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-gradient mb-2">Arena Challenges</h1>
-        <p className="text-gray-400">Complete challenges, earn points, and climb the leaderboard</p>
+        <p className="text-gray-400">Complete challenges, earn points, and compete with others</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -74,14 +72,14 @@ export default function ArenaPage() {
                   <div>
                     <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
                     <div className="flex gap-4 text-sm text-gray-400">
-                      <span>Difficulty: <span className="text-primary font-semibold">{challenge.difficulty}/3</span></span>
-                      <span>Reward: <span className="text-accent font-semibold">{challenge.reward} pts</span></span>
-                      <span>Time: <span className="font-semibold">{challenge.timeLimit}s</span></span>
+                      <span>Difficulty: <span className="text-primary font-semibold">{'⭐'.repeat(challenge.difficulty)}</span></span>
+                      <span>Entry: <span className="text-accent font-semibold">{challenge.entryFee} ETH</span></span>
+                      <span>Duration: <span className="font-semibold">{challenge.duration}s</span></span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-primary">{challenge.reward}</p>
-                    <p className="text-xs text-gray-400">points</p>
+                    <p className="text-sm text-gray-400">Joined</p>
+                    <p className="text-2xl font-bold text-primary">{challenge.participants}</p>
                   </div>
                 </div>
 
@@ -103,43 +101,33 @@ export default function ArenaPage() {
           </div>
         </div>
 
-        {/* Leaderboard Sidebar */}
+        {/* Info Sidebar */}
         <div className="lg:col-span-1">
           <div className="card sticky top-24">
-            <h2 className="text-xl font-bold mb-6">🏆 Leaderboard</h2>
+            <h2 className="text-xl font-bold mb-6">📋 How It Works</h2>
 
-            {leaderboardLoading ? (
-              <div className="text-center py-8 text-gray-400">
-                Loading leaderboard...
+            <div className="space-y-4 text-sm text-gray-300">
+              <div>
+                <h3 className="font-semibold text-white mb-2">1. Choose a Challenge</h3>
+                <p>Select a challenge based on difficulty and entry fee</p>
               </div>
-            ) : leaderboard.length > 0 ? (
-              <div className="space-y-3">
-                {leaderboard.slice(0, 10).map((entry, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                      entry.user === address
-                        ? 'bg-primary/10 border border-primary/30'
-                        : 'bg-dark/50 hover:bg-dark/80'
-                    }`}
-                  >
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary/20 text-sm font-bold">
-                      {idx + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">
-                        {entry.user === address
-                          ? 'You'
-                          : `${entry.user.slice(0, 6)}...${entry.user.slice(-4)}`}
-                      </p>
-                    </div>
-                    <p className="text-sm font-bold text-accent">{entry.score}</p>
-                  </div>
-                ))}
+              <div>
+                <h3 className="font-semibold text-white mb-2">2. Pay Entry Fee</h3>
+                <p>Submit entry fee transaction (costs ETH)</p>
               </div>
-            ) : (
-              <p className="text-center text-gray-400 py-8">No leaderboard data yet</p>
-            )}
+              <div>
+                <h3 className="font-semibold text-white mb-2">3. Complete Challenge</h3>
+                <p>Work against the timer to complete objectives</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">4. Submit Score</h3>
+                <p>Submit your completion proof and score</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white mb-2">5. Earn Rewards</h3>
+                <p>Gain reputation and split the prize pool</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -162,9 +150,9 @@ export default function ArenaPage() {
 
             <div className="space-y-4 mb-6">
               <div className="bg-dark rounded p-4">
-                <p className="text-gray-400 text-sm mb-2">Challenge Details</p>
+                <p className="text-gray-400 text-sm mb-2">Challenge Description</p>
                 <p className="text-gray-300">
-                  Test your skills in this {['easy', 'medium', 'hard'][challenges[selectedChallenge]?.difficulty - 1]} difficulty challenge. Complete it to earn {challenges[selectedChallenge]?.reward} points!
+                  {challenges[selectedChallenge]?.description}
                 </p>
               </div>
 
@@ -172,13 +160,13 @@ export default function ArenaPage() {
                 <div className="bg-dark rounded p-4">
                   <p className="text-gray-400 text-sm">Time Limit</p>
                   <p className="text-xl font-bold text-primary">
-                    {challenges[selectedChallenge]?.timeLimit}s
+                    {challenges[selectedChallenge]?.duration}s
                   </p>
                 </div>
                 <div className="bg-dark rounded p-4">
-                  <p className="text-gray-400 text-sm">Reward</p>
+                  <p className="text-gray-400 text-sm">Entry Fee</p>
                   <p className="text-xl font-bold text-accent">
-                    {challenges[selectedChallenge]?.reward} pts
+                    {challenges[selectedChallenge]?.entryFee} ETH
                   </p>
                 </div>
               </div>
@@ -192,7 +180,7 @@ export default function ArenaPage() {
               disabled={entering}
               className="btn btn-accent w-full disabled:opacity-50"
             >
-              {entering ? 'Joining Challenge...' : 'Accept Challenge'}
+              {entering ? 'Processing...' : 'Join Challenge'}
             </button>
           </div>
         </div>

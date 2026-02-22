@@ -1,9 +1,37 @@
 export const SOMNIA_PASSPORT_ABI = [
   {
     inputs: [],
-    name: 'mint',
+    name: 'mintPassport',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
+    name: 'getPassport',
+    outputs: [
+      {
+        components: [
+          { internalType: 'uint256', name: 'reputation', type: 'uint256' },
+          { internalType: 'uint256', name: 'arenaPoints', type: 'uint256' },
+          { internalType: 'uint256', name: 'wins', type: 'uint256' },
+          { internalType: 'uint256', name: 'participation', type: 'uint256' },
+          { internalType: 'uint256', name: 'createdAt', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+        ],
+        internalType: 'struct SomniaPassport.PassportData',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'passportOf',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -13,36 +41,13 @@ export const SOMNIA_PASSPORT_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'hasPassport',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
-    name: 'ownerOf',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
-    name: 'tokenURI',
-    outputs: [{ internalType: 'string', name: '', type: 'string' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
 ];
 
 export const ARENA_ENGINE_ABI = [
   {
     inputs: [
-      { internalType: 'string', name: '_title', type: 'string' },
-      { internalType: 'uint256', name: '_difficulty', type: 'uint256' },
-      { internalType: 'uint32', name: '_reward', type: 'uint32' },
-      { internalType: 'uint32', name: '_timeLimit', type: 'uint32' },
+      { internalType: 'uint256', name: 'entryFee', type: 'uint256' },
+      { internalType: 'uint256', name: 'duration', type: 'uint256' },
     ],
     name: 'createChallenge',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -53,14 +58,13 @@ export const ARENA_ENGINE_ABI = [
     inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
     name: 'enterChallenge',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
     type: 'function',
   },
   {
     inputs: [
       { internalType: 'uint256', name: 'challengeId', type: 'uint256' },
-      { internalType: 'address', name: 'participant', type: 'address' },
-      { internalType: 'uint32', name: 'score', type: 'uint32' },
+      { internalType: 'uint256', name: 'score', type: 'uint256' },
     ],
     name: 'submitScore',
     outputs: [],
@@ -71,20 +75,29 @@ export const ARENA_ENGINE_ABI = [
     inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
     name: 'getChallenge',
     outputs: [
-      { internalType: 'string', name: 'title', type: 'string' },
-      { internalType: 'uint256', name: 'difficulty', type: 'uint256' },
-      { internalType: 'uint32', name: 'reward', type: 'uint32' },
-      { internalType: 'uint32', name: 'timeLimit', type: 'uint32' },
-      { internalType: 'address', name: 'creator', type: 'address' },
-      { internalType: 'bool', name: 'isActive', type: 'bool' },
-      { internalType: 'uint32', name: 'participantCount', type: 'uint32' },
+      {
+        components: [
+          { internalType: 'uint256', name: 'id', type: 'uint256' },
+          { internalType: 'address', name: 'creator', type: 'address' },
+          { internalType: 'uint256', name: 'entryFee', type: 'uint256' },
+          { internalType: 'uint256', name: 'duration', type: 'uint256' },
+          { internalType: 'uint256', name: 'startTime', type: 'uint256' },
+          { internalType: 'uint256', name: 'totalPrize', type: 'uint256' },
+          { internalType: 'bool', name: 'finalized', type: 'bool' },
+          { internalType: 'address', name: 'topPlayer', type: 'address' },
+          { internalType: 'uint256', name: 'topScore', type: 'uint256' },
+        ],
+        internalType: 'struct ArenaEngine.Challenge',
+        name: '',
+        type: 'tuple',
+      },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
-    name: 'challengeCount',
+    name: 'getChallengeIdCounter',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -93,42 +106,28 @@ export const ARENA_ENGINE_ABI = [
 
 export const REPUTATION_CORE_ABI = [
   {
-    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
-    name: 'getReputation',
-    outputs: [
-      { internalType: 'uint32', name: 'score', type: 'uint32' },
-      { internalType: 'uint32', name: 'arenaPoints', type: 'uint32' },
-      { internalType: 'uint32', name: 'wins', type: 'uint32' },
-      { internalType: 'uint32', name: 'participation', type: 'uint32' },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
-    name: 'getRank',
-    outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
-      { internalType: 'address', name: 'user', type: 'address' },
-      { internalType: 'uint32', name: 'points', type: 'uint32' },
+      { internalType: 'uint256', name: 'wins', type: 'uint256' },
+      { internalType: 'uint256', name: 'participation', type: 'uint256' },
+      { internalType: 'uint256', name: 'arenaPoints', type: 'uint256' },
     ],
-    name: 'addArenaPoints',
+    name: 'calculateReputation',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'pure',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
+    name: 'updateReputation',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [],
-    name: 'getTopUsers',
-    outputs: [
-      { internalType: 'address[]', name: '', type: 'address[]' },
-      { internalType: 'uint32[]', name: '', type: 'uint32[]' },
-    ],
-    stateMutability: 'view',
+    name: 'getReputationFormula',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'pure',
     type: 'function',
   },
 ];

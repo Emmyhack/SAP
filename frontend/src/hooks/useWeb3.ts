@@ -1,23 +1,23 @@
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { useCallback, useState } from 'react';
 import { contracts } from '../config/contracts';
-import { Address, parseAbi } from 'viem';
+import { Address } from 'viem';
 
 // Hook to check if user has a passport
 export function useHasPassport() {
   const { address } = useAccount();
   
-  const { data: hasPassport, isLoading } = useReadContract({
+  const { data: passportId, isLoading } = useReadContract({
     address: contracts.SomniaPassport.address as Address,
     abi: contracts.SomniaPassport.abi,
-    functionName: 'hasPassport',
+    functionName: 'passportOf',
     args: address ? [address] : undefined,
     query: {
       enabled: !!address,
     },
   });
 
-  return { hasPassport: hasPassport as boolean, isLoading };
+  return { hasPassport: (passportId as bigint)?.toString() !== '0' && !!passportId, isLoading };
 }
 
 // Hook to mint a passport
@@ -34,7 +34,7 @@ export function useMintPassport() {
       const hash = await writeContractAsync({
         address: contracts.SomniaPassport.address as Address,
         abi: contracts.SomniaPassport.abi,
-        functionName: 'mint',
+        functionName: 'mintPassport',
       });
 
       return hash;
@@ -50,14 +50,14 @@ export function useMintPassport() {
   return { mint, isLoading, error };
 }
 
-// Hook to get user reputation
-export function useReputation() {
+// Hook to get user passport data
+export function usePassportData() {
   const { address } = useAccount();
 
-  const { data: reputation, isLoading, refetch } = useReadContract({
-    address: contracts.ReputationCore.address as Address,
-    abi: contracts.ReputationCore.abi,
-    functionName: 'getReputation',
+  const { data: passportData, isLoading, refetch } = useReadContract({
+    address: contracts.SomniaPassport.address as Address,
+    abi: contracts.SomniaPassport.abi,
+    functionName: 'getPassport',
     args: address ? [address] : undefined,
     query: {
       enabled: !!address,
@@ -65,41 +65,21 @@ export function useReputation() {
   });
 
   return {
-    reputation: reputation as [number, number, number, number] | undefined,
+    passportData: passportData as any,
     isLoading,
     refetch,
   };
 }
 
-// Hook to get user rank
-export function useUserRank() {
-  const { address } = useAccount();
-
-  const { data: rank, isLoading } = useReadContract({
-    address: contracts.ReputationCore.address as Address,
-    abi: contracts.ReputationCore.abi,
-    functionName: 'getRank',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: !!address,
-    },
-  });
-
-  return { rank: rank as number | undefined, isLoading };
-}
-
-// Hook to get challenges
-export function useChallenges() {
-  const { data: challengeCount, isLoading: countLoading } = useReadContract({
+// Hook to get challenges count
+export function useChallengesCount() {
+  const { data: count, isLoading } = useReadContract({
     address: contracts.ArenaEngine.address as Address,
     abi: contracts.ArenaEngine.abi,
-    functionName: 'challengeCount',
+    functionName: 'getChallengeIdCounter',
   });
 
-  return {
-    challengeCount: challengeCount as number | undefined,
-    isLoading: countLoading,
-  };
+  return { count: count as bigint | undefined, isLoading };
 }
 
 // Hook to get a specific challenge
@@ -146,23 +126,4 @@ export function useEnterChallenge() {
   );
 
   return { enter, isLoading, error };
-}
-
-// Hook to get top users (leaderboard)
-export function useLeaderboard() {
-  const { data, isLoading } = useReadContract({
-    address: contracts.ReputationCore.address as Address,
-    abi: contracts.ReputationCore.abi,
-    functionName: 'getTopUsers',
-  });
-
-  const [users, scores] = data as [Address[], number[]] || [[], []];
-
-  return {
-    leaderboard: users?.map((user, i) => ({
-      user,
-      score: scores?.[i] || 0,
-    })) || [],
-    isLoading,
-  };
 }

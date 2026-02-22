@@ -1,13 +1,12 @@
 import { useAccount } from 'wagmi';
 import { useState } from 'react';
-import { useHasPassport, useMintPassport, useReputation, useUserRank } from '../hooks/useWeb3';
+import { useHasPassport, useMintPassport, usePassportData } from '../hooks/useWeb3';
 
 export default function HomePage() {
   const { address, isConnected } = useAccount();
   const { hasPassport, isLoading: passportLoading } = useHasPassport();
   const { mint, isLoading: minting, error } = useMintPassport();
-  const { reputation } = useReputation();
-  const { rank } = useUserRank();
+  const { passportData } = usePassportData();
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const handleMint = async () => {
@@ -87,31 +86,24 @@ export default function HomePage() {
       </div>
 
       {/* Stats Grid */}
-      {hasPassport && reputation && (
+      {hasPassport && passportData && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="card">
             <p className="text-gray-400 text-sm mb-2">Reputation Score</p>
-            <p className="text-3xl font-bold text-primary">{reputation[0]}</p>
+            <p className="text-3xl font-bold text-primary">{(passportData[0] || 0).toString()}</p>
           </div>
           <div className="card">
             <p className="text-gray-400 text-sm mb-2">Arena Points</p>
-            <p className="text-3xl font-bold text-accent">{reputation[1]}</p>
+            <p className="text-3xl font-bold text-accent">{(passportData[1] || 0).toString()}</p>
           </div>
           <div className="card">
             <p className="text-gray-400 text-sm mb-2">Wins</p>
-            <p className="text-3xl font-bold text-green-400">{reputation[2]}</p>
+            <p className="text-3xl font-bold text-green-400">{(passportData[2] || 0).toString()}</p>
           </div>
           <div className="card">
             <p className="text-gray-400 text-sm mb-2">Participation</p>
-            <p className="text-3xl font-bold text-blue-400">{reputation[3]}</p>
+            <p className="text-3xl font-bold text-blue-400">{(passportData[3] || 0).toString()}</p>
           </div>
-        </div>
-      )}
-
-      {hasPassport && rank && (
-        <div className="mt-8 card text-center">
-          <p className="text-gray-400 mb-2">Your Rank</p>
-          <p className="text-5xl font-bold text-gradient">Rank #{rank}</p>
         </div>
       )}
     </div>
