@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #0b0f14;
+  color: #e6edf3;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Buttons */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-blue-600 text-white;
+}
+
+.btn-secondary {
+  @apply bg-secondary hover:bg-gray-950 text-white border border-border;
+}
+
+.btn-accent {
+  @apply bg-accent hover:bg-cyan-300 text-dark;
+}
+
+/* Cards */
+.card {
+  @apply bg-secondary border border-border rounded-xl p-6 hover:border-primary transition-all duration-200;
+}
+
+/* Input */
+.input {
+  @apply w-full px-4 py-3 rounded-lg bg-dark border border-border text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors;
+}
+
+/* Text styles */
+.text-gradient {
+  background: linear-gradient(135deg, #2f81f7 0%, #00d9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
