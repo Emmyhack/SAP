@@ -278,3 +278,79 @@ export function useFinalizeChallenge() {
 
   return { finalize, isLoading, error };
 }
+
+// Hook to withdraw winnings/rewards
+export function useWithdraw() {
+  const { writeContractAsync } = useWriteContract();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const withdraw = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const hash = await writeContractAsync({
+        address: contracts.ArenaEngine.address as Address,
+        abi: contracts.ArenaEngine.abi,
+        functionName: 'withdraw',
+      });
+
+      return hash;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to withdraw');
+      setError(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [writeContractAsync]);
+
+  return { withdraw, isLoading, error };
+}
+
+// Hook to get pending withdrawals for an address
+export function usePendingWithdrawals(address?: string) {
+  const { data: pendingAmount, isLoading } = useReadContract({
+    address: contracts.ArenaEngine.address as Address,
+    abi: contracts.ArenaEngine.abi,
+    functionName: 'pendingWithdrawals',
+    args: address ? [address as Address] : undefined,
+    query: {
+      enabled: !!address,
+    },
+  });
+
+  return { pendingAmount: pendingAmount as bigint | undefined, isLoading };
+}
+
+// Hook to get leaderboard for a challenge
+export function useLeaderboard(challengeId: number) {
+  const { data: leaderboard, isLoading } = useReadContract({
+    address: contracts.ArenaEngine.address as Address,
+    abi: contracts.ArenaEngine.abi,
+    functionName: 'getLeaderboard',
+    args: [BigInt(challengeId)],
+  }) as { data: [Address[], bigint[]] | undefined; isLoading: boolean };
+
+  return {
+    leaders: (leaderboard?.[0] as Address[] | undefined) || [],
+    scores: (leaderboard?.[1] as bigint[] | undefined) || [],
+    isLoading,
+  };
+}
+
+// Hook to calculate rank for a participant
+export function useCalculateRank(challengeId: number, participant?: string) {
+  const { data: rank, isLoading } = useReadContract({
+    address: contracts.ArenaEngine.address as Address,
+    abi: contracts.ArenaEngine.abi,
+    functionName: 'calculateRank',
+    args: participant ? [BigInt(challengeId), participant as Address] : undefined,
+    query: {
+      enabled: !!participant,
+    },
+  });
+
+  return { rank: rank as bigint | undefined, isLoading };
+}

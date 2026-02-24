@@ -73,6 +73,20 @@ export const ARENA_ENGINE_ABI = [
   },
   {
     inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
+    name: 'finalizeChallenge',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'withdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
     name: 'getChallenge',
     outputs: [
       {
@@ -92,6 +106,47 @@ export const ARENA_ENGINE_ABI = [
         type: 'tuple',
       },
     ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'pendingWithdrawals',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
+    name: 'getParticipantCount',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
+    name: 'getParticipants',
+    outputs: [{ internalType: 'address[]', name: '', type: 'address[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'challengeId', type: 'uint256' }],
+    name: 'getLeaderboard',
+    outputs: [
+      { internalType: 'address[]', name: 'addresses', type: 'address[]' },
+      { internalType: 'uint256[]', name: 'scores_', type: 'uint256[]' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'challengeId', type: 'uint256' },
+      { internalType: 'address', name: 'participant', type: 'address' },
+    ],
+    name: 'calculateRank',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
