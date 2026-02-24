@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const { hasPassport, isLoading: passportLoading } = useHasPassport();
   const { mint, isLoading: minting, error: mintError } = useMintPassport();
-  const { data: passportData } = usePassportData();
+  const { passportData, isLoading: dataLoading } = usePassportData();
   const [showMintModal, setShowMintModal] = useState(false);
   const [mintSuccess, setMintSuccess] = useState<string | null>(null);
 
@@ -16,6 +16,11 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen pt-20 pb-16 flex items-center justify-center px-4 bg-white">
         <div className="text-center max-w-2xl">
+          <div className="mb-8">
+            <svg className="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
           <h1 className="text-5xl md:text-6xl font-black text-dark mb-4">
             Connect Your Wallet
           </h1>
@@ -42,32 +47,56 @@ export default function DashboardPage() {
 
         {/* Passport Section */}
         {passportLoading ? (
-          <div className="bg-gray-50 border border-border rounded-2xl p-12 mb-16 animate-pulse">
+          <div className="bg-gray-100 border border-border rounded-2xl p-12 mb-16 animate-pulse">
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+            </div>
             <div className="h-40 bg-gray-200 rounded-xl"></div>
           </div>
         ) : !hasPassport ? (
-          <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border-2 border-primary/30 rounded-2xl p-12 mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-black text-dark mb-6">
-              Set Up Your Passport
-            </h2>
-            <p className="text-gray-600 mb-10 max-w-2xl text-lg">
-              Your soulbound NFT gaming identity. This is a non-transferable, permanent record of your competitive history on the blockchain.
-            </p>
-            <Button
-              onClick={() => setShowMintModal(true)}
-              variant="primary"
-              size="lg"
-            >
-              Mint Passport Now
-            </Button>
+          <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 border-2 border-primary/30 rounded-3xl p-12 md:p-16 mb-16 animate-fade-in relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-4xl md:text-5xl font-black text-dark mb-6 leading-tight">
+                  Set Up Your Passport
+                </h2>
+                <p className="text-gray-700 mb-8 max-w-2xl text-lg leading-relaxed">
+                  Your soulbound NFT gaming identity. This is a non-transferable, permanent record of your competitive history on the blockchain.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                  <Button
+                    onClick={() => setShowMintModal(true)}
+                    variant="primary"
+                    size="lg"
+                  >
+                    Mint Passport Now
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                  >
+                    Learn More
+                  </Button>
+                </div>
+              </div>
+              <div className="hidden md:flex justify-center">
+                <div className="w-80 h-80 bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-3xl blur-2xl opacity-20"></div>
+                  <svg className="w-48 h-48 text-primary relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <>
             {/* Passport Active */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-12 mb-16 animate-fade-in">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-primary rounded-2xl p-12 mb-16 animate-fade-in">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <p className="text-green-600 font-semibold">Active & Verified</p>
+                <div className="w-3 h-3 bg-primary rounded-full"></div>
+                <p className="text-primary font-semibold">Active & Verified</p>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-dark mb-4">
                 Passport Verified
@@ -78,7 +107,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Statistics */}
-            {passportData && (
+            {dataLoading ? (
+              <div className="mb-16">
+                <h3 className="text-2xl font-black text-dark mb-8">Your Statistics</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="card-lg animate-pulse">
+                      <div className="h-3 w-20 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-10 w-24 bg-gray-200 rounded mb-3"></div>
+                      <div className="h-2 w-16 bg-gray-200 rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : passportData ? (
               <div className="mb-16 animate-fade-in" style={{animationDelay: '0.2s'}}>
                 <h3 className="text-2xl font-black text-dark mb-8">Your Statistics</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -103,6 +145,10 @@ export default function DashboardPage() {
                     color="secondary"
                   />
                 </div>
+              </div>
+            ) : (
+              <div className="mb-16 p-8 rounded-lg border border-dashed border-gray-300 text-center">
+                <p className="text-gray-500">No passport data available</p>
               </div>
             )}
 

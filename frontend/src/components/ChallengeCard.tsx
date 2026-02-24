@@ -62,11 +62,11 @@ export default function ChallengeCard({
           </div>
           <div>
             <p className="text-xs text-gray-500 font-bold mb-2 uppercase">Entry Fee</p>
-            <p className="text-sm font-black text-accent">{entryFee} ETH</p>
+            <p className="text-sm font-black text-accent">{entryFee} SMN</p>
           </div>
           <div>
             <p className="text-xs text-gray-500 font-bold mb-2 uppercase">Duration</p>
-            <p className="text-sm font-black text-blue-400">{duration}s</p>
+            <p className="text-sm font-black text-green-600">{duration}s</p>
           </div>
           <div>
             <p className="text-xs text-gray-500 font-bold mb-2 uppercase">Reward</p>

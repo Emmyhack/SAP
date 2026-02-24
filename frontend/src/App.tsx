@@ -6,13 +6,14 @@ import Navigation from './components/Navigation';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import ChallengesPage from './pages/ChallengesPage';
+import CreateChallengePage from './pages/CreateChallengePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import ProfilePage from './pages/ProfilePage';
 
 const queryClient = new QueryClient();
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'landing' | 'dashboard' | 'challenges' | 'leaderboard' | 'profile'>('landing');
+  const [currentPage, setCurrentPage] = useState<'landing' | 'dashboard' | 'challenges' | 'create-challenge' | 'leaderboard' | 'profile'>('landing');
 
   return (
     <WagmiProvider config={config}>
@@ -22,9 +23,10 @@ export default function App() {
         ) : (
           <>
             <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage as any} />
-            <main className="bg-dark min-h-screen">
+            <main className="bg-white min-h-screen">
               {currentPage === 'dashboard' && <DashboardPage />}
               {currentPage === 'challenges' && <ChallengesPage />}
+              {currentPage === 'create-challenge' && <CreateChallengePage />}
               {currentPage === 'leaderboard' && <LeaderboardPage />}
               {currentPage === 'profile' && <ProfilePage />}
             </main>

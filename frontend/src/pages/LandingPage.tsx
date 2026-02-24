@@ -21,14 +21,18 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header Navigation */}
-      <header className="sticky top-0 z-40 border-b border-border bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-soft">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg"></div>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-r from-primary to-accent rounded-lg text-white font-black flex items-center justify-center text-sm">S</div>
             <span className="text-lg font-black text-dark">Somnia Arena</span>
           </div>
           <Button
-            onClick={() => !isConnected && connect({ connector: injected() })}
+            onClick={() => {
+              if (!isConnected) {
+                connect({ connector: injected() });
+              }
+            }}
             variant={isConnected ? 'secondary' : 'primary'}
             size="sm"
           >
@@ -48,19 +52,17 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
               <p className="text-xl text-gray-600 mb-10 leading-relaxed">
                 A decentralized competitive platform where your skill directly translates into cryptocurrency earnings and verifiable global recognition on the blockchain.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
                 <Button
                   onClick={handleGetStarted}
                   variant="primary"
                   size="lg"
-                  className="px-8 py-3"
                 >
                   {isConnected ? 'Enter Arena' : 'Start Competing Free'}
                 </Button>
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="px-8 py-3"
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
                 >
                   Learn More
@@ -71,13 +73,62 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
               </p>
             </div>
             <div className="hidden lg:block">
-              <div className="w-full h-96 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
-                <div className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center">
-                    <span className="text-3xl">🎮</span>
-                  </div>
-                  <p>Arena Dashboard Preview</p>
-                </div>
+              <div className="w-full h-96 bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                {/* Trophy & Competition Illustration */}
+                <svg viewBox="0 0 400 400" className="w-full h-full max-w-md max-h-md">
+                  {/* Background Elements */}
+                  <defs>
+                    <linearGradient id="trophyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style={{stopColor: '#10B981', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: '#059669', stopOpacity: 1}} />
+                    </linearGradient>
+                    <linearGradient id="podiumGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style={{stopColor: '#34D399', stopOpacity: 0.3}} />
+                      <stop offset="100%" style={{stopColor: '#10B981', stopOpacity: 0.1}} />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Podium 1st Place (Center - Tallest) */}
+                  <rect x="165" y="240" width="70" height="120" fill="url(#podiumGradient)" stroke="#10B981" strokeWidth="2" rx="4"/>
+                  <text x="200" y="270" fontSize="16" fontWeight="bold" textAnchor="middle" fill="#059669">1st</text>
+                  <circle cx="200" cy="200" r="20" fill="url(#trophyGradient)" stroke="#10B981" strokeWidth="2"/>
+                  <path d="M 200 175 L 200 165 M 190 170 L 210 170 M 195 165 L 205 165" stroke="#10B981" strokeWidth="2" fill="none"/>
+                  
+                  {/* Podium 2nd Place (Right) */}
+                  <rect x="260" y="280" width="70" height="80" fill="url(#podiumGradient)" stroke="#34D399" strokeWidth="2" rx="4"/>
+                  <text x="295" y="305" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#059669">2nd</text>
+                  <circle cx="295" cy="250" r="16" fill="#34D399" stroke="#10B981" strokeWidth="1.5" opacity="0.8"/>
+                  
+                  {/* Podium 3rd Place (Left) */}
+                  <rect x="70" y="300" width="70" height="60" fill="url(#podiumGradient)" stroke="#34D399" strokeWidth="2" rx="4"/>
+                  <text x="105" y="320" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#059669">3rd</text>
+                  <circle cx="105" cy="270" r="14" fill="#34D399" stroke="#10B981" strokeWidth="1.5" opacity="0.8"/>
+                  
+                  {/* Rising Stars/Participants Indicators */}
+                  <g opacity="0.6">
+                    <circle cx="100" cy="120" r="8" fill="#10B981"/>
+                    <line x1="100" y1="128" x2="100" y2="160" stroke="#10B981" strokeWidth="2" strokeDasharray="3,3"/>
+                  </g>
+                  <g opacity="0.6">
+                    <circle cx="300" cy="140" r="8" fill="#10B981"/>
+                    <line x1="300" y1="148" x2="300" y2="180" stroke="#10B981" strokeWidth="2" strokeDasharray="3,3"/>
+                  </g>
+                  
+                  {/* Upward Arrow showing growth */}
+                  <g>
+                    <line x1="50" y1="200" x2="350" y2="200" stroke="#E5E7EB" strokeWidth="1" opacity="0.3"/>
+                    <path d="M 60 280 L 100 240 L 140 180 L 200 120 L 260 160 L 320 100" stroke="#10B981" strokeWidth="3" fill="none" opacity="0.5"/>
+                    <polygon points="320,85 315,100 330,95" fill="#10B981" opacity="0.7"/>
+                  </g>
+                  
+                  {/* Sparkles for dynamic feel */}
+                  <g opacity="0.7">
+                    <circle cx="220" cy="150" r="2" fill="#fbbf24"/>
+                    <circle cx="180" cy="130" r="2" fill="#fbbf24"/>
+                    <circle cx="240" cy="220" r="2" fill="#fbbf24"/>
+                    <circle cx="160" cy="240" r="2" fill="#fbbf24"/>
+                  </g>
+                </svg>
               </div>
             </div>
           </div>
@@ -154,7 +205,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
               {/* Feature 6 */}
               <div className="bg-white rounded-xl p-8 border border-border">
                 <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-xl">🎯</span>
+                  <span className="text-xl"></span>
                 </div>
                 <h3 className="text-xl font-bold text-dark mb-3">Multiple Game Types</h3>
                 <p className="text-gray-600">
@@ -202,7 +253,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
               <div key={item.step} className="relative">
                 <div className="absolute -top-6 left-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-lg">
                   {item.step}
-                </div>
+                </div>76
                 <div className="pt-8 border-l-2 border-primary pl-8">
                   <h3 className="text-lg font-bold text-dark mb-2">{item.title}</h3>
                   <p className="text-gray-600 text-sm">{item.description}</p>
@@ -347,14 +398,16 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
               Start building your reputation, compete globally, and earn real rewards today. No credit card required.
             </p>
 
-            <Button
-              onClick={handleGetStarted}
-              variant="primary"
-              size="lg"
-              className="px-12 py-4 text-lg font-bold"
-            >
-              {isConnected ? 'Enter Arena Now' : 'Start Competing Free'}
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                onClick={handleGetStarted}
+                variant="primary"
+                size="lg"
+                className="px-12 py-4 text-lg font-bold"
+              >
+                {isConnected ? 'Enter Arena Now' : 'Start Competing Free'}
+              </Button>
+            </div>
 
             <p className="text-sm text-gray-500 mt-8">
               No credit card • No deposits • Just compete and earn

@@ -1,5 +1,6 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
+const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("ArenaEngine", function () {
   let somniaPassport;
@@ -24,7 +25,8 @@ describe("ArenaEngine", function () {
     // Transfer ownership of passport to arena
     await somniaPassport.transferOwnership(await arenaEngine.getAddress());
 
-    // Mint passports for test users
+    // Mint passports for test users (including owner)
+    await somniaPassport.connect(owner).mintPassport();
     await somniaPassport.connect(user1).mintPassport();
     await somniaPassport.connect(user2).mintPassport();
     await somniaPassport.connect(user3).mintPassport();
@@ -83,25 +85,28 @@ describe("ArenaEngine", function () {
 
       await expect(
         arenaEngine.createChallenge(entryFee, duration)
-      ).to.be.revertedWith("Duration must be at least 1 hour");
+      ).to.be.revertedWith("Duration must be between 1 hour and 30 days");
     });
 
-    it("Should only allow owner to create challenges", async function () {
+    it("Should require passport to create challenges", async function () {
       const entryFee = ethers.parseEther("1");
       const duration = 24 * 3600;
 
+      // Get a fresh signer without passport
+      const [, , , , , user5] = await ethers.getSigners();
+
       await expect(
-        arenaEngine.connect(user1).createChallenge(entryFee, duration)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+        arenaEngine.connect(user5).createChallenge(entryFee, duration)
+      ).to.be.revertedWith("Must mint passport first");
     });
 
     it("Should allow zero entry fee", async function () {
       const entryFee = ethers.parseEther("0");
       const duration = 24 * 3600;
 
-      await arenaEngine.createChallenge(entryFee, duration);
-      const challenge = await arenaEngine.getChallenge(1);
-      expect(challenge.entryFee).to.equal(0);
+      await expect(
+        arenaEngine.createChallenge(entryFee, duration)
+      ).to.be.revertedWith("Entry fee must be greater than 0");
     });
   });
 
@@ -159,12 +164,13 @@ describe("ArenaEngine", function () {
     });
 
     it("Should revert if no passport minted", async function () {
-      const newUser = owner;
       const entryFee = ethers.parseEther("1");
 
-      // Owner didn't mint passport
+      // Get a fresh signer without passport
+      const [, , , , , user5] = await ethers.getSigners();
+
       await expect(
-        arenaEngine.connect(owner).enterChallenge(1, { value: entryFee })
+        arenaEngine.connect(user5).enterChallenge(1, { value: entryFee })
       ).to.be.revertedWith("Must mint passport first");
     });
 
@@ -384,13 +390,20 @@ describe("ArenaEngine", function () {
       ).to.be.revertedWith("Challenge is finalized");
     });
 
-    it("Should only allow owner to finalize", async function () {
-      await ethers.provider.send("evm_increaseTime", [25 * 3600]);
-      await ethers.provider.send("evm_mine");
+    it("Should only allow owner or creator to finalize", async function () {
+      await time.increase(25 * 3600);
 
+      // user1 is not the creator (owner created the challenge), so should fail
       await expect(
         arenaEngine.connect(user1).finalizeChallenge(1)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      ).to.be.revertedWith("Only creator or owner can finalize");
+
+      // owner is the creator, so this should work
+      const tx = await arenaEngine.connect(owner).finalizeChallenge(1);
+      await tx.wait();
+
+      const challenge = await arenaEngine.getChallenge(1);
+      expect(challenge.finalized).to.equal(true);
     });
   });
 
@@ -580,6 +593,208 @@ describe("ArenaEngine", function () {
 
       const [addresses, scores] = await arenaEngine.getLeaderboard(1);
       expect(addresses.length).to.be.gt(0);
+    });
+  });
+
+  describe("End-to-End Web3 Integration Tests", function () {
+    let user5; // User without passport
+
+    beforeEach(async function () {
+      // Get a fresh signer without passport
+      const signers = await ethers.getSigners();
+      user5 = signers[5];
+    });
+
+    it("Should execute complete challenge lifecycle: create -> enter -> score -> finalize", async function () {
+      // Step 1: User1 creates a challenge
+      const entryFee = ethers.parseEther("0.5");
+      const duration = 24 * 3600;
+
+      const createTx = await arenaEngine.connect(user1).createChallenge(entryFee, duration);
+      await createTx.wait();
+
+      const challengeId = 1;
+      let challenge = await arenaEngine.getChallenge(challengeId);
+
+      expect(challenge.id).to.equal(challengeId);
+      expect(challenge.creator).to.equal(user1.address);
+      expect(challenge.entryFee).to.equal(entryFee);
+      expect(challenge.finalized).to.equal(false);
+
+      // Check initial participant count is 0
+      let participantCount = await arenaEngine.getParticipantCount(challengeId);
+      expect(participantCount).to.equal(0);
+
+      // Step 2: User2 enters the challenge with entry fee
+      const enterTx = await arenaEngine
+        .connect(user2)
+        .enterChallenge(challengeId, { value: entryFee });
+      await enterTx.wait();
+
+      participantCount = await arenaEngine.getParticipantCount(challengeId);
+      expect(participantCount).to.equal(1);
+
+      // Step 3: User3 also enters the challenge
+      const enter2Tx = await arenaEngine
+        .connect(user3)
+        .enterChallenge(challengeId, { value: entryFee });
+      await enter2Tx.wait();
+
+      participantCount = await arenaEngine.getParticipantCount(challengeId);
+      expect(participantCount).to.equal(2);
+
+      // Step 4: User2 submits their score
+      const score2 = 950;
+      const submitTx1 = await arenaEngine
+        .connect(user2)
+        .submitScore(challengeId, score2);
+      await submitTx1.wait();
+
+      let userScore2 = await arenaEngine.scores(challengeId, user2.address);
+      expect(userScore2).to.equal(score2);
+
+      // Step 5: User3 submits their score (winning score)
+      const score3 = 1000;
+      const submitTx2 = await arenaEngine
+        .connect(user3)
+        .submitScore(challengeId, score3);
+      await submitTx2.wait();
+
+      let userScore3 = await arenaEngine.scores(challengeId, user3.address);
+      expect(userScore3).to.equal(score3);
+
+      // Step 6: Get leaderboard before finalization
+      const [beforeAddresses, beforeScores] = await arenaEngine.getLeaderboard(challengeId);
+      expect(beforeAddresses.length).to.equal(2);
+      expect(beforeScores.length).to.equal(2);
+      expect(beforeAddresses[0]).to.equal(user3.address); // Winner
+      expect(beforeScores[0]).to.equal(score3);
+
+      // Step 6b: Advance time so challenge duration has passed
+      await time.increase(duration + 1);
+
+      // Step 7: Challenge creator finalizes the challenge
+      const finalizeTx = await arenaEngine.connect(user1).finalizeChallenge(challengeId);
+      await finalizeTx.wait();
+
+      challenge = await arenaEngine.getChallenge(challengeId);
+      expect(challenge.finalized).to.equal(true);
+
+      // Step 8: Verify challenge is now finalized (can't enter anymore)
+      await expect(
+        arenaEngine.connect(user4).enterChallenge(challengeId, { value: entryFee })
+      ).to.be.revertedWith("Challenge is finalized");
+
+      // Step 9: Verify leaderboard after finalization
+      const [finalAddresses, finalScores] = await arenaEngine.getLeaderboard(challengeId);
+      expect(finalAddresses.length).to.equal(2);
+      expect(finalAddresses[0]).to.equal(user3.address); // Winner confirmed
+      expect(finalScores[0]).to.equal(score3);
+    });
+
+    it("Should correctly calculate rewards and platform fee", async function () {
+      const entryFee = ethers.parseEther("1");
+      const duration = 24 * 3600;
+
+      // Creator creates challenge
+      await arenaEngine.connect(user1).createChallenge(entryFee, duration);
+
+      // Two users enter
+      const user2BalanceBefore = await ethers.provider.getBalance(user2.address);
+      const enterTx = await arenaEngine
+        .connect(user2)
+        .enterChallenge(1, { value: entryFee });
+      const enterReceipt = await enterTx.wait();
+      const gasCost = enterReceipt.gasUsed * enterReceipt.gasPrice;
+
+      await arenaEngine.connect(user3).enterChallenge(1, { value: entryFee });
+
+      // Both submit scores (user3 wins with higher score)
+      await arenaEngine.connect(user2).submitScore(1, 800);
+      await arenaEngine.connect(user3).submitScore(1, 900);
+
+      // Advance time so challenge duration has passed
+      await time.increase(duration + 1);
+
+      // Finalize challenge
+      await arenaEngine.connect(user1).finalizeChallenge(1);
+
+      // Total pool should be 2 * 1 ETH = 2 ETH
+      const totalPool = entryFee * 2n;
+
+      // 70% goes to creator + winners split, 30% platform fee
+      // With 1 winner: creator gets 30% (0.6 ETH) + winner gets 70% (0.7 ETH) from prize pool
+      expect(totalPool).to.equal(ethers.parseEther("2"));
+    });
+
+    it("Should prevent non-passport holders from creating challenges", async function () {
+      const entryFee = ethers.parseEther("1");
+      const duration = 24 * 3600;
+
+      // user5 hasn't minted passport
+      await expect(
+        arenaEngine.connect(user5).createChallenge(entryFee, duration)
+      ).to.be.revertedWith("Must mint passport first");
+    });
+
+    it("Should validate entry fee is greater than zero", async function () {
+      const duration = 24 * 3600;
+
+      // Attempt to create challenge with 0 entry fee
+      await expect(
+        arenaEngine.connect(user1).createChallenge(0, duration)
+      ).to.be.revertedWith("Entry fee must be greater than 0");
+    });
+
+    it("Should allow users with passport to create challenges", async function () {
+      const entryFee = ethers.parseEther("0.1");
+      const duration = 24 * 3600;
+
+      // user5 mints passport
+      await somniaPassport.connect(user5).mintPassport();
+
+      // user5 should now be able to create challenge
+      await expect(arenaEngine.connect(user5).createChallenge(entryFee, duration))
+        .to.emit(arenaEngine, "ChallengeCreated")
+        .withArgs(1, user5.address, entryFee, duration);
+    });
+
+    it("Should handle multiple challenges and maintain separate leaderboards", async function () {
+      const entryFee = ethers.parseEther("0.5");
+      const duration = 24 * 3600;
+
+      // Create two separate challenges
+      await arenaEngine.connect(user1).createChallenge(entryFee, duration);
+      await arenaEngine.connect(user2).createChallenge(entryFee, duration);
+
+      // User3 enters both challenges
+      await arenaEngine.connect(user3).enterChallenge(1, { value: entryFee });
+      await arenaEngine.connect(user3).enterChallenge(2, { value: entryFee });
+
+      // Submit different scores for each challenge
+      await arenaEngine.connect(user3).submitScore(1, 800);
+      await arenaEngine.connect(user3).submitScore(2, 900);
+
+      // Verify scores are tracked separately
+      const score1 = await arenaEngine.scores(1, user3.address);
+      const score2 = await arenaEngine.scores(2, user3.address);
+
+      expect(score1).to.equal(800);
+      expect(score2).to.equal(900);
+
+      // Advance time so challenge duration has passed
+      await time.increase(duration + 1);
+
+      // Finalize both challenges
+      await arenaEngine.connect(user1).finalizeChallenge(1);
+      await arenaEngine.connect(user2).finalizeChallenge(2);
+
+      // Verify both are finalized
+      const challenge1 = await arenaEngine.getChallenge(1);
+      const challenge2 = await arenaEngine.getChallenge(2);
+
+      expect(challenge1.finalized).to.equal(true);
+      expect(challenge2.finalized).to.equal(true);
     });
   });
 });

@@ -107,8 +107,10 @@ contract ArenaEngine is Ownable, ReentrancyGuard {
     /// @param entryFee Entry fee in wei
     /// @param duration Challenge duration in seconds
     /// @return challengeId ID of the created challenge
-    function createChallenge(uint256 entryFee, uint256 duration) external onlyOwner returns (uint256) {
-        require(duration >= 3600, "Duration must be at least 1 hour");
+    function createChallenge(uint256 entryFee, uint256 duration) external returns (uint256) {
+        require(passportContract.passportOf(msg.sender) != 0, "Must mint passport first");
+        require(entryFee > 0, "Entry fee must be greater than 0");
+        require(duration >= 3600 && duration <= 30 days, "Duration must be between 1 hour and 30 days");
 
         uint256 challengeId = challengeIdCounter;
         challengeIdCounter += 1;
@@ -202,10 +204,11 @@ contract ArenaEngine is Ownable, ReentrancyGuard {
 
     /// @notice Finalize challenge and distribute rewards
     /// @param challengeId Challenge ID to finalize
-    function finalizeChallenge(uint256 challengeId) external onlyOwner nonReentrant {
+    function finalizeChallenge(uint256 challengeId) external nonReentrant {
         Challenge storage challenge = challenges[challengeId];
         require(challenge.id != 0, "Challenge does not exist");
         require(!challenge.finalized, "Challenge already finalized");
+        require(msg.sender == challenge.creator || msg.sender == owner(), "Only creator or owner can finalize");
         require(block.timestamp >= challenge.startTime + challenge.duration, "Challenge still active");
 
         challenge.finalized = true;

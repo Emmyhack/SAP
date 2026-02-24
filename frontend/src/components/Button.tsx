@@ -11,6 +11,7 @@ interface ButtonProps {
   children: ReactNode;
   className?: string;
   title?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 export default function Button({
@@ -24,8 +25,9 @@ export default function Button({
   children,
   className = '',
   title = '',
+  type = 'button',
 }: ButtonProps) {
-  const baseStyles = 'font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2';
+  const baseStyles = 'font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-soft hover:shadow-medium';
   
   const sizeStyles = {
     sm: 'px-3 py-2 text-sm',
@@ -35,17 +37,19 @@ export default function Button({
 
   const variantStyles = {
     primary: error 
-      ? 'bg-red-600/50 text-white disabled:opacity-50'
-      : 'bg-primary text-white hover:bg-secondary disabled:opacity-50',
-    secondary: 'bg-white border-2 border-border text-dark hover:border-primary hover:text-primary disabled:opacity-50',
+      ? 'bg-error text-white hover:bg-red-600 disabled:opacity-50'
+      : 'bg-primary text-white hover:bg-secondary hover:shadow-green-glow disabled:opacity-50',
+    secondary: error
+      ? 'bg-error text-white hover:bg-red-600 disabled:opacity-50'
+      : 'bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white disabled:opacity-50',
     accent: error
-      ? 'bg-red-600/50 text-white disabled:opacity-50'
-      : 'bg-secondary text-white hover:bg-primary disabled:opacity-50',
-    ghost: 'text-gray-700 hover:text-primary disabled:opacity-50',
+      ? 'bg-error text-white hover:bg-red-600 disabled:opacity-50'
+      : 'bg-accent text-dark hover:bg-primary hover:text-white hover:shadow-green-glow disabled:opacity-50',
+    ghost: 'text-primary hover:bg-primary/10 hover:text-secondary disabled:opacity-50',
   };
 
   const widthStyles = fullWidth ? 'w-full' : '';
-  const disabledStyles = (disabled || loading) ? 'cursor-not-allowed opacity-60' : 'hover:scale-105 active:scale-95';
+  const disabledStyles = (disabled || loading) ? 'cursor-not-allowed opacity-60' : 'active:scale-95';
 
   const handleClick = async () => {
     if (!onClick || disabled || loading) return;
@@ -61,12 +65,13 @@ export default function Button({
 
   return (
     <button
+      type={type}
       onClick={handleClick}
       disabled={disabled || loading || !!error}
       title={error ? `Error: ${error}` : title}
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${widthStyles} ${disabledStyles} ${className}`}
     >
-      {loading && <span className="animate-spin">⏳</span>}
+      {loading && <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>}
       {error && <span>⚠️</span>}
       {children}
     </button>
